@@ -625,5 +625,50 @@ module 0x1::m {
     "#)
 }
 
+#[test]
+fn test_resolve_variable_with_compound_expr() {
+    // language=Move
+    test_resolve_reference(r#"
+module 0x1::m {
+    fun main() {
+        let x = 1;
+          //X
+        x += 1;
+      //^
+    }
+}
+    "#)
+}
+
+#[test]
+fn test_resolve_enum() {
+    // language=Move
+    test_resolve_reference(r#"
+module 0x1::m {
+    enum S { One, Two }
+            //X
+    fun main() {
+        S::One;
+          //^
+    }
+}
+    "#)
+}
+
+#[test]
+fn test_resolve_method_call() {
+    // language=Move
+    test_resolve_reference(r#"
+module 0x1::m {
+    enum S { One, Two }
+    fun receiver(self: S) {}
+        //X
+    fun main(s: S) {
+        (S::One).receiver();
+                  //^
+    }
+}
+    "#)
+}
 
 
